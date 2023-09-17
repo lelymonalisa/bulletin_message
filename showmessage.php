@@ -14,25 +14,30 @@
     
     require_once "database.php";
     $sql="SELECT * FROM message ORDER BY postdate DESC";
-    $all_message = $conn->query($sql);
-    $row = mysqli_fetch_assoc($all_message);
-  
+    $all_message = $conn->query($sql);  
 ?>
 <div> 
 <?php
  while ($row = mysqli_fetch_assoc($all_message)) {
 ?>
 <div class="container">
-    <div class="form-group">
-        <p class="fullname"><?php echo $row["fullname"];?></p>
+    <div class="card-header">
+        <p class="fullname"><?php echo htmlspecialchars($row["fullname"]);?></p>
+        <p class="postdate"><?php echo htmlspecialchars($row["postdate"]);?></p>
     </div>
     <div class="form-group">
-        <p class="postdate"><?php echo $row["postdate"];?></p>
+        <p class="<?php echo htmlspecialchars($row["messagecolor"]);?>"><?php echo $row["message"];?></p>
     </div>
-    <div class="form-group">
-        <p class="<?php echo $row["messagecolor"];?>" style='color:<?php echo $row["messagecolor"];?>'><?php echo $row["message"];?></p>
-    </div>
-    <img class="image" src="<?php echo 'bulletin-message/uploaded_img/'.$row["image"]; ?>" height="100" alt="uploaded image " />
+    <?php
+    if ($row["image"] != "") {
+        echo '<img class="image" src="uploaded_img/'.$row["image"].'" height="100" alt="uploaded image">';
+    }
+    ?>
+    <?PHP if($_SESSION["userid"] === $row["userid"]) : ?>
+        <div class="form-group"><br>
+        <a href="delete_message.php" class="btn btn-danger">Delete</a>
+        </div>
+    <?PHP endif; ?>
     </div> <br>
     <?php
  }
