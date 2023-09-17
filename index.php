@@ -1,10 +1,10 @@
 <?php
 session_start();
-if (isset($_SESSION["id"])) {
-    $id = $_SESSION["id"];
+if (isset($_SESSION["userid"])) {
+    $userid = $_SESSION["userid"];
     $fullname = $_SESSION["fullname"];
 } else {
-    $id = "";
+    $userid = "-1";
 }
 ?>
 
@@ -23,16 +23,20 @@ if (isset($_SESSION["id"])) {
     <?php
          if (isset($_POST["submit"])) {
             $fullname = $_POST["fullname"];
+            $userid = "-1";
             if(isset($_SESSION["fullname"])){
               $fullname = $_SESSION["fullname"];
+            }
+            if(isset($_SESSION["userid"])){
+              $userid= $_SESSION["userid"];
             }
             $message = $_POST["message"];
             $messagecolor = $_POST["messagecolor"];
             $image = $_FILES['image']['name'];
             $image_size = $_FILES['image']['size'];
             $image_tmp_name = $_FILES['image']['tmp_name'];
-            $image_folder = 'bulletin-message/uploaded_img/'.$image;
-            $destination_path = getcwd().DIRECTORY_SEPARATOR;
+            $image_folder = 'uploaded_img/';
+            $destination_path = $image_folder;
             $target_path = $destination_path.basename($_FILES["image"]["name"]);
             move_uploaded_file($image_tmp_name,$target_path);
             $errors = array();
@@ -52,12 +56,12 @@ if (isset($_SESSION["id"])) {
                     echo "<div class='alert alert-danger'>$error</div>";
                 }
                }else{
-                $sql = "INSERT INTO message (fullname, message, messagecolor, image) VALUES (?, ?, ?, ?)";
-                $stmt = mysqli_stmt_init($conn);
-                if (mysqli_stmt_prepare($stmt, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "ssss", $fullname, $message, $messagecolor, $image);
+                    $sql = "INSERT INTO message (fullname, userid, message, messagecolor, image) VALUES (?, ?, ?, ?, ?)";
+                    $stmt = mysqli_stmt_init($conn);
+                    if (mysqli_stmt_prepare($stmt, $sql)) {
+                    mysqli_stmt_bind_param($stmt, "sisss", $fullname, $userid, $message, $messagecolor, $image);
                     mysqli_stmt_execute($stmt);
-                    echo "<div class='alert alert-success'>Message successfully submitted</div>";
+                    echo "<div id='successAlert' class='alert alert-success'>Message successfully submitted</div>";
                     mysqli_stmt_close($stmt);
                 } else {
                     echo "Error: " . mysqli_error($conn);
@@ -67,19 +71,29 @@ if (isset($_SESSION["id"])) {
             
         }
         ?>
-        <h1>Welcome to the Bulletin Board</h1>
-            <?PHP if(isset($_SESSION["user"])) : ?>
+        <script>
+            setTimeout(function() {
+            var successAlert = document.getElementById('successAlert');
+            successAlert.style.display = 'none';
+            }, 2000); 
+        </script>
+
+
+        <div class="centered-text">
+            <h1>Welcome to the Bulletin Board System</h1>
+        </div>
+            <?PHP if(isset($_SESSION["userid"])) : ?>
                 <div class="form-group"><br>
                 <a href="logout.php" class="btn btn-warning">Logout</a>
                 </div>
             <?PHP else : ?>
                 <div class="form-group"><br>
-                <a href="login.php" class="btn btn-warning">login</a>
+                <p>Have an account? <a href="login.php">Login</a></p>
                 </div>
             <?PHP endif; ?>
         <form action="index.php" method="post" enctype="multipart/form-data">   
-             <?PHP if(!isset($_SESSION["user"])) : ?>
-                <div class="form-group"><br>
+             <?PHP if(!isset($_SESSION["userid"])) : ?>
+                <div class="form-group">
                 <input type="text" class="form-control" name="fullname" placeholder="Enter Fullname">
             </div>
             <?PHP endif; ?> 
@@ -87,15 +101,16 @@ if (isset($_SESSION["id"])) {
                 <textarea cols="20" rows="5" class="form-control" name="message" placeholder="Enter Full Message"></textarea>
             </div>
             <div class="form-group">
-                <select class="form-control" name="messagecolor" placeholder="Choose Color">
+                <select class="form-control" name="messagecolor" placeholder="Choose Color";>
                 <option value="Black">Black</option>
                 <option value="Red">Red</option>
                 <option value="Green">Green</option>
                 <option value="Blue">Blue</option>
                 <option value="Yellow">Yellow</option></select>
-                <div id="textToChange">This is the text to change color</div>
+                <div style= "color:grey">This is the option to change color</div>
             </div>
             <div class="form-group">
+                <div>Image(optional)</div>
                 <input type="file" accept="image/png, image/jpeg" class="form-control" name="image" placeholder="Image">
             </div>
             <div class="form-btn">
