@@ -13,6 +13,16 @@ body{
     margin-bottom: 20px;
 }
 
+.card-header{
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.centered-text{
+    text-align: center;
+}
+
 p.Black { color: black; }
 p.Red { color: red; }
 p.Green { color: green; }
