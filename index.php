@@ -1,9 +1,13 @@
 <?php
 session_start();
-if (!isset($_SESSION["user"])) {
-    header("Location: login.php");
- } 
+if (isset($_SESSION["id"])) {
+    $id = $_SESSION["id"];
+    $fullname = $_SESSION["fullname"];
+} else {
+    $id = "";
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +21,13 @@ if (!isset($_SESSION["user"])) {
 <body>
     <div class="container">
     <?php
-        if (isset($_POST["submit"])) {
-           $username = $_POST["username"];
-           $message = $_POST["message"];
-           $messagecolor = $_POST["messagecolor"];
+         if (isset($_POST["submit"])) {
+            $fullname = $_POST["fullname"];
+            if(isset($_SESSION["fullname"])){
+              $fullname = $_SESSION["fullname"];
+            }
+            $message = $_POST["message"];
+            $messagecolor = $_POST["messagecolor"];
             $image = $_FILES['image']['name'];
             $image_size = $_FILES['image']['size'];
             $image_tmp_name = $_FILES['image']['tmp_name'];
@@ -33,12 +40,9 @@ if (!isset($_SESSION["user"])) {
             array_push($errors,"File too big");
            }
            
-           if (empty($username) OR empty($message) OR empty($messagecolor)) {
+           if (empty($fullname) OR empty($message) OR empty($messagecolor)) {
             array_push($errors,"Fullname & Message fields cannot be empty");
            }
-           if (strpos($username, ' ') !== false) {
-            array_push($errors, "Username cannot contain space");
-            }
            if (strlen($message)>100) {
             array_push($errors,"Message cannot be 100 charactes");
            }
@@ -48,10 +52,10 @@ if (!isset($_SESSION["user"])) {
                     echo "<div class='alert alert-danger'>$error</div>";
                 }
                }else{
-                $sql = "INSERT INTO message (username, message, messagecolor, image) VALUES (?, ?, ?, ?)";
+                $sql = "INSERT INTO message (fullname, message, messagecolor, image) VALUES (?, ?, ?, ?)";
                 $stmt = mysqli_stmt_init($conn);
                 if (mysqli_stmt_prepare($stmt, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "ssss", $username, $message, $messagecolor, $image);
+                    mysqli_stmt_bind_param($stmt, "ssss", $fullname, $message, $messagecolor, $image);
                     mysqli_stmt_execute($stmt);
                     echo "<div class='alert alert-success'>Message successfully submitted</div>";
                     mysqli_stmt_close($stmt);
@@ -64,11 +68,21 @@ if (!isset($_SESSION["user"])) {
         }
         ?>
         <h1>Welcome to the Bulletin Board</h1>
-        <a href="logout.php" class="btn btn-warning">Logout</a>
-        <form action="index.php" method="post" enctype="multipart/form-data">    
-            <div class="form-group"><br>
-                <input type="text" class="form-control" name="username" placeholder="Enter Username">
+            <?PHP if(isset($_SESSION["user"])) : ?>
+                <div class="form-group"><br>
+                <a href="logout.php" class="btn btn-warning">Logout</a>
+                </div>
+            <?PHP else : ?>
+                <div class="form-group"><br>
+                <a href="login.php" class="btn btn-warning">login</a>
+                </div>
+            <?PHP endif; ?>
+        <form action="index.php" method="post" enctype="multipart/form-data">   
+             <?PHP if(!isset($_SESSION["user"])) : ?>
+                <div class="form-group"><br>
+                <input type="text" class="form-control" name="fullname" placeholder="Enter Fullname">
             </div>
+            <?PHP endif; ?> 
             <div class="form-group">
                 <textarea cols="20" rows="5" class="form-control" name="message" placeholder="Enter Full Message"></textarea>
             </div>
