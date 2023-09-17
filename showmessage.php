@@ -24,7 +24,7 @@
 ?>
 <div class="container">
     <div class="form-group">
-        <p class="username"><?php echo $row["username"];?></p>
+        <p class="fullname"><?php echo $row["fullname"];?></p>
     </div>
     <div class="form-group">
         <p class="postdate"><?php echo $row["postdate"];?></p>
