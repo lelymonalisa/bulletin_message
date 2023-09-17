@@ -56,6 +56,12 @@
         }
      }
  ?>
+ <script>
+        setTimeout(function() {
+        var successAlert = document.getElementById('successAlert');
+        successAlert.style.display = 'none';
+        }, 2000); 
+        </script>
     <form action="registration.php" method="post">
             <div class="form-group">
                 <input type="username" class="form-control" name="username" placeholder="User Name">
