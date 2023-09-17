@@ -16,11 +16,13 @@
     $sql="SELECT * FROM message ORDER BY postdate DESC";
     $all_message = $conn->query($sql);  
 ?>
+
 <div> 
 <?php
  while ($row = mysqli_fetch_assoc($all_message)) {
 ?>
 <div class="container">
+    <form action="delete_message.php" method="post" enctype="multipart/form-data">   
     <div class="card-header">
         <p class="fullname"><?php echo htmlspecialchars($row["fullname"]);?></p>
         <p class="postdate"><?php echo htmlspecialchars($row["postdate"]);?></p>
@@ -34,8 +36,8 @@
     }
     ?>
     <?PHP if($_SESSION["userid"] === $row["userid"]) : ?>
-        <div class="form-group"><br>
-        <a href="delete_message.php" class="btn btn-danger">Delete</a>
+        <div class="form-btn">
+        <button onclick="deleteMsg('<?PHP $row["message_id"] ?>')" class="btn btn-danger">Delete</button>
         </div>
     <?PHP endif; ?>
     </div> <br>
@@ -43,5 +45,13 @@
  }
     ?>
 </div>
+<script>
+function deleteMsg(id){
+  var x = new XMLHttpRequest();
+  x.open("POST", 'delete_message.php');
+  x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  x.send("message_id="+id);
+}
+</script>
 </body>
 </html>
