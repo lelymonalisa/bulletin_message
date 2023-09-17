@@ -26,6 +26,7 @@ if (isset($_SESSION["user"])) {
             $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
             if ($user) {
                 if (password_verify($password, $user["password"])) {
+                    $_SESSION["fullname"] = $user["fullname"];
                     session_start();
                     $_SESSION["user"] = "yes";
                     header("Location: index.php");
