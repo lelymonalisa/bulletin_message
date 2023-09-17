@@ -2,7 +2,7 @@
 session_start();
 require_once "database.php";
 
-if(isset($_POST["delete_message"]) && isset($_POST["message_id"])) {
+if(isset($_POST["message_id"])) {
     $message_id = $_POST["message_id"];
     $user_id = $_SESSION["userid"];
     $stmt = $conn->prepare("SELECT userid FROM message WHERE id = ?");
