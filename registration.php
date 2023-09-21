@@ -23,26 +23,31 @@
             $errors = array();
 
             if (empty($username) or empty($fullname) or empty($password) or empty($passwordRepeat)) {
-                array_push($errors, "All fields cannot be empty");
+                array_push($errors, "All fields can't be empty");
             }
             if (strpos($username, ' ') !== false) {
-                array_push($errors, "Username cannot contain space");
+                array_push($errors, "Login ID can't contain space");
             }
             if (strlen($fullname) > 10) {
-                array_push($errors, "Name cannot be 10 characters");
+                array_push($errors, "Name max 10 characters");
             }
             if (strlen($password) < 8) {
-                array_push($errors, "Password must be at least 8 characters");
+                array_push($errors, "Password min 8 characters");
             }
             if ($password !== $passwordRepeat) {
-                array_push($errors, "Passwords do not match");
+                array_push($errors, "Passwords don't match");
             }
             require_once "database.php";
-            $sql = "SELECT * FROM users WHERE username = '$username'";
-            $result = mysqli_query($conn, $sql);
+            $sql = "SELECT * FROM users WHERE username = ?";
+            $stmt = mysqli_stmt_init($conn);
+            mysqli_stmt_prepare($stmt, $sql);
+            mysqli_stmt_bind_param($stmt, "s", $username);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
             $rowCount = mysqli_num_rows($result);
             if ($rowCount > 0) {
-                array_push($errors, "Username already exists!");
+                array_push($errors, "Login ID already exists!");
             }
             if (count($errors) > 0) {
                 foreach ($errors as $error) {
@@ -55,30 +60,28 @@
                 if ($prepareStmt) {
                     mysqli_stmt_bind_param($stmt, "sss", $username, $fullname, $passwordHash);
                     mysqli_stmt_execute($stmt);
-                    echo "<div id='successAlert' class='alert alert-success'>Congratulations! You have successfully registered.</div>";
-                    echo "<script>
-                    setTimeout(function () {
-                        var successAlert = document.getElementById('successAlert');
-                        successAlert.style.display = 'none';
-                        window.location.href = 'login.php';
-                    }, 2000); 
-                  </script>";
+                    echo "<div class='alert alert-success'>Congratulations! You have successfully registered.</div>";
                 } else {
                     die("Something went wrong");
                 }
             }
         }
         ?>
-
+        <script>
+            setTimeout(function () {
+                var successAlert = document.getElementById('successAlert');
+                successAlert.style.display = 'none';
+            }, 2000); 
+        </script>
         <form action="registration.php" method="post">
             <div class="form-group">
-                <input type="username" class="form-control" name="username" placeholder="Enter Login ID">
+                <input type="username" class="form-control" name="username" placeholder="Login ID">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" name="fullname" placeholder="Enter Name">
+                <input type="text" class="form-control" name="fullname" placeholder="Name">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="Enter Password">
+                <input type="password" class="form-control" name="password" placeholder="Password">
             </div>
             <div class="form-group">
                 <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password">
@@ -91,10 +94,5 @@
                 <p>Have an account? <a href="login.php">Login</a></p>
             </div>
         </form>
-    </div>
-</body>
-<div class="container-style">
-    <a href="index.php">Home Page</a></p>
-</div>
 
 </html>
