@@ -44,7 +44,7 @@
                             echo '<img class="image" src="uploaded_img/' . $row["image"] . '" height="100" alt="uploaded image">';
                         }
                         ?>
-                        <?PHP if (isset($_SESSION["userid"]) && $_SESSION["userid"] === $row["userid"]): ?>
+                        <?PHP if (isset($_SESSION["userid"]) && $_SESSION["userid"] == $row["userid"]): ?>
                             <form action="delete_message.php" method="post">
                                 <input type="hidden" name="message_id" value="<?php echo $row["message_id"]; ?>">
                                 <div class="form-btn">
