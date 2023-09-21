@@ -62,13 +62,16 @@ if (isset($_SESSION['message_deleted'])) {
                 array_push($errors, "File too big");
             }
             if (empty($message)) {
-                array_push($errors, "Message field cannot be empty");
+                array_push($errors, "Message field can't be empty");
+            }
+            if (strlen($fullname) > 10) {
+                array_push($errors, "Name max 10 characters");
             }
             if ($nameRequired && empty($fullname)) {
-                array_push($errors, "Fullname field cannot be empty");
+                array_push($errors, "Fullname field can't be empty");
             }
             if (strlen($message) > 100) {
-                array_push($errors, "Message cannot be 100 characters");
+                array_push($errors, "Message max 100 characters");
             }
             require_once "database.php";
             if (count($errors) > 0) {
