@@ -24,9 +24,13 @@ if (isset($_SESSION["userid"])) {
             $username = $_POST["username"];
             $password = $_POST["password"];
             require_once "database.php";
-            $sql = "SELECT * FROM users WHERE username = '$username'";
-            $result = mysqli_query($conn, $sql);
-            $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+            $sql = "SELECT * FROM users WHERE username=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
             if ($user) {
                 if (password_verify($password, $user["password"])) {
                     session_start();
@@ -35,10 +39,10 @@ if (isset($_SESSION["userid"])) {
                     header("Location: index.php");
                     die();
                 } else {
-                    echo "<div class='alert alert-danger'>Password does not match</div>";
+                    echo "<div class='alert alert-danger'>Password doesn't match</div>";
                 }
             } else {
-                echo "<div class='alert alert-danger'>Username does not match</div>";
+                echo "<div class='alert alert-danger'>Login ID doesn't match</div>";
             }
         }
         ?>
