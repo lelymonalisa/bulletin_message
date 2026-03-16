@@ -20,7 +20,7 @@ A web-based bulletin board application that allows users to create accounts, log
 - **Server Support**: Localhost, Heroku (JAWSDB/ClearDB)
 
 ## File Structure
-
+```
 bulletin_message/
 ├── index.php              # Main page (post messages)
 ├── login.php              # Login page
@@ -32,6 +32,7 @@ bulletin_message/
 ├── style.css              # Custom styling
 ├── message_bulleting.sql  # Database dump
 └── uploaded_img/          # Image storage folder
+```
 
 ## Installation
 
